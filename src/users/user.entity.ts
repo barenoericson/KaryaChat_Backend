@@ -23,6 +23,9 @@ export class User {
   @Column({ nullable: true })
   avatar: string;
 
+  @Column({ nullable: true })
+  bio: string;
+
   @Column({ default: false })
   isEmailVerified: boolean;
 

@@ -64,4 +64,13 @@ export class UsersService {
       .take(10)
       .getMany();
   }
+
+  async updateProfile(
+    id: string,
+    data: { username?: string; bio?: string; avatar?: string },
+  ): Promise<User> {
+    await this.usersRepository.update(id, data);
+    const updated = await this.findById(id);
+    return updated!;
+  }
 }
