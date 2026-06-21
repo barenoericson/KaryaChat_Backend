@@ -1,5 +1,6 @@
 import {
   Injectable, NotFoundException, ForbiddenException, BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -15,7 +16,7 @@ import { AiService } from '../ai/ai.service';
 
 @Injectable()
 export class QuizzesService {
-  private groq: Groq;
+  private _groq: Groq | undefined;
 
   constructor(
     @InjectRepository(Quiz)
@@ -30,8 +31,15 @@ export class QuizzesService {
     private userRepo: Repository<User>,
     private configService: ConfigService,
     private aiService: AiService,
-  ) {
-    this.groq = new Groq({ apiKey: this.configService.get<string>('GROQ_API_KEY') });
+  ) {}
+
+  private get groq(): Groq {
+    if (!this._groq) {
+      const apiKey = this.configService.get<string>('GROQ_API_KEY');
+      if (!apiKey) throw new InternalServerErrorException('GROQ_API_KEY is not configured on the server.');
+      this._groq = new Groq({ apiKey });
+    }
+    return this._groq;
   }
 
   async generate(teacherId: string, classId: string, lessonId: string): Promise<Quiz> {
