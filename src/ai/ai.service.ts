@@ -120,13 +120,18 @@ export interface QuestionGrade {
 
 @Injectable()
 export class AiService {
-  private groq: Groq;
+  private _groq: Groq | undefined;
   private guestCounts = new Map<string, number>();
 
-  constructor(private configService: ConfigService) {
-    this.groq = new Groq({
-      apiKey: this.configService.get<string>('GROQ_API_KEY'),
-    });
+  constructor(private configService: ConfigService) {}
+
+  private get groq(): Groq {
+    if (!this._groq) {
+      const apiKey = this.configService.get<string>('GROQ_API_KEY');
+      if (!apiKey) throw new InternalServerErrorException('GROQ_API_KEY is not configured on the server.');
+      this._groq = new Groq({ apiKey });
+    }
+    return this._groq;
   }
 
   async chat(
