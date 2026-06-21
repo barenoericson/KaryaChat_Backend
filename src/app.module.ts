@@ -7,6 +7,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { AiModule } from './ai/ai.module';
+import { ClassesModule } from './classes/classes.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -45,6 +47,8 @@ import { AiModule } from './ai/ai.module';
     AuthModule,
     ChatModule,
     AiModule,
+    ClassesModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

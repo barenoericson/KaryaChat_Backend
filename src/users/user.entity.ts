@@ -6,6 +6,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export enum UserRole {
+  ADMIN = 'admin',
+  TEACHER = 'teacher',
+  STUDENT = 'student',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -20,6 +26,13 @@ export class User {
   @Column()
   username: string;
 
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.STUDENT,
+  })
+  role: UserRole;
+
   @Column({ nullable: true })
   avatar: string;
 
@@ -29,11 +42,11 @@ export class User {
   @Column({ default: false })
   isEmailVerified: boolean;
 
+  @Column({ default: false })
+  isOnline: boolean;
+
   @Column({ nullable: true, type: 'varchar' })
   emailVerificationToken: string | null;
-
-  @Column({ default: true })
-  isOnline: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
