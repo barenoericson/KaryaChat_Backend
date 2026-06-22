@@ -30,6 +30,18 @@ export class AdminService {
     return this.userRepo.save(user);
   }
 
+  async seedAdmin(userId: string): Promise<{ message: string }> {
+    const adminCount = await this.userRepo.count({ where: { role: UserRole.ADMIN } });
+    if (adminCount > 0) {
+      throw new Error('An admin already exists. This endpoint is disabled.');
+    }
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    user.role = UserRole.ADMIN;
+    await this.userRepo.save(user);
+    return { message: `User ${user.email} promoted to admin.` };
+  }
+
   async getStats() {
     const [totalUsers, totalTeachers, totalStudents, totalClasses, totalLessons, totalSubmissions, totalQuizResults] =
       await Promise.all([
